@@ -1,11 +1,13 @@
 var express = require('express')
 var bodyParser = require('body-parser')
 var mongoose = require('mongoose')
+var ejs = require('ejs')
+var fs = require('fs')
 var app = express();
 var schema = mongoose.Schema;
 
 app.use(bodyParser.urlencoded({
-  extended : true;
+  extended : true
 }))
 
 mongoose.connect("mongodb://localhost/datasearch", function(err){
@@ -22,6 +24,9 @@ var FileSchema = new schema({
     type : String
   },
   date : {
+    type : String
+  },
+  kind : {
     type : String
   },
   link : {
@@ -41,6 +46,16 @@ app.listen(3000, function(err){
   }
 })
 
+app.get('/', function(req, res){
+  res.redirect('/search')
+})
+
+app.get('/search', function(req, res){
+  fs.readFile('index.ejs', 'utf-8', function(err, data){
+    res.send(data)
+  })
+})
+
 app.post('/search', function(req, res){
   Files.findOne({
     filename : req.param('filename')
@@ -50,7 +65,16 @@ app.post('/search', function(req, res){
       throw err
     }
     else if(result){
-      res.json(result)
+      res.(result)
     }
+  })
+})
+
+app.post('/push', function(req, res){
+  var push = new schema({
+    filename : req.param('filename'),
+    date : req.param('date'),
+    kind : req.param('kind'),
+    link : req.param('link')
   })
 })
