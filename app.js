@@ -65,16 +65,40 @@ app.post('/search', function(req, res){
       throw err
     }
     else if(result){
-      res.(result)
+      fs.readFile('result.ejs', 'utf-8', function(err, data){
+        res.end(ejs.render(data, {
+          searchfile : req.param('filename'),
+          filename : result.filename,
+          date : result.date,
+          kind : result.kind,
+          link : result.link
+        }))
+      })
     }
   })
 })
 
 app.post('/push', function(req, res){
-  var push = new schema({
+  var push = new Files({
     filename : req.param('filename'),
     date : req.param('date'),
     kind : req.param('kind'),
     link : req.param('link')
+  })
+
+  push.save(function(err){
+    if(err){
+      console.log('Data Save Error!')
+      throw err
+    }
+    else {
+      console.log(req.param('filename')+' Data Save')
+      res.json({
+        filename : req.param('filename'),
+        data : req.param('date'),
+        kind : req.param('kind'),
+        link : req.param('link')
+      })
+    }
   })
 })
