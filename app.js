@@ -6,6 +6,7 @@ var fs = require('fs')
 var app = express();
 var schema = mongoose.Schema;
 
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({
   extended : true
 }))
