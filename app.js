@@ -6,10 +6,10 @@ const fs = require('fs')
 const multer = require('multer');
 const moment = require('moment')
 const filedisk = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: (req, file, cb)=>{
         cb(null, 'file/')
     },
-    filename: function (req, file, cb) {
+    filename: (req, file, cb)=>{
         cb(null, file.originalname)
     }
 })
@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }))
 
-mongoose.connect("mongodb://localhost/datasearch", function (err) {
+mongoose.connect("mongodb://localhost/datasearch", (err)=>{
     if (err) {
         console.log("DB Error!")
     }
@@ -51,7 +51,7 @@ var FileSchema = new schema({
 
 var Files = mongoose.model('file', FileSchema)
 
-app.listen(3000, function (err) {
+app.listen(3000, (err)=>{
     if (err) {
         console.log('Server Error!')
         throw err
@@ -61,17 +61,17 @@ app.listen(3000, function (err) {
     }
 })
 
-app.get('/', function (req, res) {
+app.get('/', (req, res)=>{
     res.redirect('/search')
 })
 
-app.get('/search', function (req, res) {
+app.get('/search', (req, res)=>{
     fs.readFile('index.ejs', 'utf-8', function (err, data) {
         res.send(data)
     })
 })
 
-app.post('/search', function (req, res) {
+app.post('/search', (req, res)=>{
     Files.findOne({
         filename: req.param('filename')
     }, function (err, result) {
@@ -81,7 +81,7 @@ app.post('/search', function (req, res) {
         }
         else if (result) {
             console.log(result)
-            fs.readFile('result.ejs', 'utf-8', function (err, data) {
+            fs.readFile('result.ejs', 'utf-8', (err, data)=>{
                 res.end(ejs.render(data, {
                     searchfile: req.param('filename'),
                     filename: result.filename,
@@ -100,7 +100,7 @@ app.get('/push', (req, res)=>{
     })
 })
 
-app.post('/push', upload.single('file'), function (req, res) {
+app.post('/push', upload.single('file'), (req, res)=>{
     const body = req.body;
     const file = req.file;
     const time = moment().format('YYYY년 MM월 DD일, h:mm:ss A');
@@ -112,7 +112,7 @@ app.post('/push', upload.single('file'), function (req, res) {
         link: file.path
     })
 
-    push.save(function (err) {
+    push.save((err)=>{
         if (err) {
             console.log('Data Save Error!')
             throw err
